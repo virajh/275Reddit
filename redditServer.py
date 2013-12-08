@@ -20,23 +20,41 @@ head = {'content-type': 'application/json'}
 #Create Topic method
 @route('/topics', method='POST')
 def createTopic():
-"""
-	This method is the API used for creating a new topic on the reddit server.
-	The route is '/topics' and the HTTP method used is POST. The data is attached in the HTTP Request body as JSON.
-	If the topic is successfully created, the object_id is returned to the client which uniquely identifies the topic in the MongoDB 		backend.
-"""
+
+	#This method is the API used for creating a new topic on the reddit server.
+	#The route is '/topics' and the HTTP method used is POST. The data is attached
+	#in the HTTP Request body as JSON. If the topic is successfully created, the
+	#object_id is returned to the client which uniquely identifies the topic in
+	#the MongoDB backend.
+
 	if request.body.read():
 		data = json.loads(request.body.read())
 		if data:
 			topic = {}
-			topic['author'] = data['author']
-			topic['desc'] = data['desc']
-			topicName = data['topicName']
+			#check for author
+			if data['author']:
+				topic['author'] = data['author']
+			else:
+				abort(400, 'Error: missing author')
+
+			#check for desc
+			if data['desc']:
+				topic['desc'] = data['desc']
+			else:
+				abort(400, 'Error: missing desc')
+
+			#check for topicName
+			if data['topicName']:
+				topic['topicName'] = data['topicName']
+			else:
+				abort(400, 'Error: missing topicName')
+
 			topic_id = None
 			try:
-				topic_id = topics.insert({topicName: topic})
+				topic_id = topics.insert(topic)
 			except:
 				abort(500, 'Error: database error')
+
 			body = {"topicId": str(topic_id)}
 			return bottle.HTTPResponse(status=200, body=json.dumps(body), headers=head)
 		else:
