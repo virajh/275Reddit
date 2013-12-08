@@ -21,9 +21,9 @@ head = {'content-type': 'application/json'}
 @route('/topics', method='POST')
 def createTopic():
 """
-This method is the API used for creating a new topic on the reddit server.
-The route is '/topics' and the HTTP method used is POST. The data is attached in the HTTP Request body as JSON.
-If the topic is successfully created, the object_id is returned to the client which uniquely identifies the topic in the MongoDB backend.
+	This method is the API used for creating a new topic on the reddit server.
+	The route is '/topics' and the HTTP method used is POST. The data is attached in the HTTP Request body as JSON.
+	If the topic is successfully created, the object_id is returned to the client which uniquely identifies the topic in the MongoDB 		backend.
 """
 	if request.body.read():
 		data = json.loads(request.body.read())
@@ -43,6 +43,7 @@ If the topic is successfully created, the object_id is returned to the client wh
 			abort(400, 'Error: no data in body')
 	else:
 		abort(400, 'Error: no body in the request')
+
 
 
 #Start server
