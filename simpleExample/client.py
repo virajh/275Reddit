@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import httplib2
 import urllib
 from json import loads, dumps
