@@ -16,7 +16,6 @@ topics = db['topics']
 global head
 head = {'content-type': 'application/json'}
 
-
 #Create Topic method
 @route('/topics', method='POST')
 def createTopic():
@@ -76,6 +75,32 @@ def deleteTopic(topicId):
                abort(500, 'Error: database error')
 	body = {"topicId": 'Removed Successfully'}
 	return bottle.HTTPResponse(status=200, body=json.dumps(body), headers=head) 
+
+#Add comments to topic
+#POST method sample , add check to see if that topic_id exists
+
+
+@route('/topics/<topicId>/comments', method='POST')
+def addComments(topicId=None):
+    if not topicId:
+        abort(400, "Bad Request: Missing Argument")
+    if request.body.read():
+           data = json.loads(request.body.read())
+       	   if data:
+                   print "in if data"
+                   author = data['author']
+                   author_comment = data['comment']
+		   try:
+		       result = topics.update({"_id":ObjectId(topicId)},{"$push":{"Comments":{"author":author,"comment":author_comment}}},upsert=FALSE)
+                       print result       
+                   except:
+                          print "\nin exception"     
+                          abort(500, 'Error: database error')
+                   return bottle.HTTPResponse(status=200, body=json.dumps(result), headers=head)
+           else:
+                abort(400, 'Error: no data in body')
+    else:
+         abort(400, 'Error: no body in the request')
 
 #Start server
 run(host='localhost', port=8080, debug=True)
