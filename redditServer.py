@@ -3,7 +3,7 @@ from bottle import *
 import bottle
 import json
 from pymongo import MongoClient
-
+from bson.objectid import ObjectId
 
 #Connection to MongoDB
 mongo = MongoClient('localhost', 27017)
@@ -65,6 +65,17 @@ def createTopic():
 """
 	New Comment
 """
+
+#Delete Topic method
+@route('/topics/<topicId>', method='DELETE')
+def deleteTopic(topicId):
+	try:
+            print 'in try'
+	    topics.remove({'_id':ObjectId(topicId)})
+	except:
+               abort(500, 'Error: database error')
+	body = {"topicId": 'Removed Successfully'}
+	return bottle.HTTPResponse(status=200, body=json.dumps(body), headers=head) 
 
 #Start server
 run(host='localhost', port=8080, debug=True)
